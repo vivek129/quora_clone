@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Spaces - Quora Clone{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Spaces</h1>
+        <a href="{% url 'core:create_space' %}" class="btn btn-success">Create New Space</a>
+    </div>
+
+    <div class="list-group">
+        {% for space in spaces %}
+            <a href="{% url 'core:space_detail' space.slug %}" class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ space.name }}</h5>
+                    <small class="text-muted">Created {{ space.created_at|timesince }} ago</small>
+                </div>
+                {% if space.description %}
+                    <p class="mb-1 text-muted">{{ space.description|truncatewords:25 }}</p>
+                {% endif %}
+                <small class="text-muted">
+                    Owned by {{ space.owner.username }} |
+                    {{ space.num_members }} Member{{ space.num_members|pluralize }} |
+                    {{ space.num_questions }} Question{{ space.num_questions|pluralize }}
+                </small>
+            </a>
+        {% empty %}
+            <p class="text-muted">No spaces found. Why not <a href="{% url 'core:create_space' %}">create one</a>?</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ topic.name }} - Quora Clone{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="topic-header mb-4 p-3 bg-light rounded">
+        <h1 class="display-5">{{ topic.name }}</h1>
+        {% if topic.description %}
+            <p class="lead">{{ topic.description }}</p>
+        {% endif %}
+        <hr class="my-3">
+        <p class="text-muted">{{ topic.questions.count }} Question{{ topic.questions.count|pluralize }} in this topic.</p>
+    </div>
+
+    {% if user.is_authenticated %}
+        <div class="card mb-4">
+            <div class="card-header">
+                Ask a Question in {{ topic.name }}
+            </div>
+            <div class="card-body">
+                <form method="post" action="{% url 'core:topic_detail' topic.slug %}">
+                    {% csrf_token %}
+                    {% for field in question_form %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            {% if field.name == 'topics' %}
+                                <div class="form-check">
+                                    {% for choice in field %}
+                                        <div class="form-check">
+                                            {{ choice.tag }}
+                                            <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                                {{ choice.choice_label }}
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ field }}
+                            {% endif %}
+                            {% if field.help_text %}
+                                <small class="form-text text-muted">{{ field.help_text }}</small>
+                            {% endif %}
+                            {% for error in field.errors %}
+                                <div class="alert alert-danger mt-1 p-1" role="alert">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary mt-2">Post Question</button>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Log in</a> or <a href="#" data-bs-toggle="modal" data-bs-target="#signupModal">Sign up</a> to ask a question in this topic.
+        </div>
+    {% endif %}
+
+    <h2 class="mb-3">Questions in {{ topic.name }}</h2>
+    {% if questions %}
+        <div class="list-group">
+            {% for question in questions %}
+                <a href="{% url 'core:question_detail' question.id %}" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{ question.title }}</h5>
+                        <small class="text-muted">{{ question.created_at|timesince }} ago</small>
+                    </div>
+                    <p class="mb-1 text-muted">Asked by {{ question.user.username }}</p>
+                    <small class="text-muted">{{ question.answers.count }} Answer{{ question.answers.count|pluralize }}</small>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-muted">No questions have been asked in this topic yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

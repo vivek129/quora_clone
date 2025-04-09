@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ space.name }} - Quora Clone{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="space-header mb-4 p-4 bg-light rounded shadow-sm">
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <h1 class="display-5">{{ space.name }}</h1>
+                <p class="text-muted mb-1">Owned by {{ space.owner.username }} | Created {{ space.created_at|timesince }} ago</p>
+                {% if space.description %}
+                    <p class="lead mt-2">{{ space.description }}</p>
+                {% endif %}
+                <p class="text-muted">{{ space.members.count }} Member{{ space.members.count|pluralize }}</p>
+            </div>
+            <div>
+                {% if user.is_authenticated %}
+                    {% if user == space.owner %}
+                        <span class="badge bg-secondary">Owner</span>
+                    {% elif is_member %}
+                        <form action="{% url 'core:join_leave_space' space.slug %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Leave Space</button>
+                        </form>
+                    {% else %}
+                        <form action="{% url 'core:join_leave_space' space.slug %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary btn-sm">Join Space</button>
+                        </form>
+                    {% endif %}
+                {% else %}
+                     <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal" class="btn btn-primary btn-sm">Join Space</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if is_member %}
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header">
+                Ask a Question in {{ space.name }}
+            </div>
+            <div class="card-body">
+                <form method="post" action="{% url 'core:space_detail' space.slug %}">
+                    {% csrf_token %}
+                    {% for field in question_form %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            {% if field.name == 'topics' %}
+                                <div class="form-check">
+                                    {% for choice in field %}
+                                        <div class="form-check">
+                                            {{ choice.tag }}
+                                            <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                                {{ choice.choice_label }}
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ field }}
+                            {% endif %}
+                            {% if field.help_text %}
+                                <small class="form-text text-muted">{{ field.help_text }}</small>
+                            {% endif %}
+                            {% for error in field.errors %}
+                                <div class="alert alert-danger mt-1 p-1" role="alert">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary mt-2">Post Question</button>
+                </form>
+            </div>
+        </div>
+    {% elif user.is_authenticated %}
+         <div class="alert alert-info" role="alert">
+            You must <form action="{% url 'core:join_leave_space' space.slug %}" method="post" class="d-inline">{% csrf_token %}<button type="submit" class="btn btn-link p-0 m-0 align-baseline">join this space</button></form> to ask questions.
+        </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Log in</a> or <a href="#" data-bs-toggle="modal" data-bs-target="#signupModal">Sign up</a> and join this space to ask questions.
+        </div>
+    {% endif %}
+
+    <h2 class="mb-3">Questions in {{ space.name }}</h2>
+    {% if questions %}
+        <div class="list-group">
+            {% for question in questions %}
+                <a href="{% url 'core:question_detail' question.id %}" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{ question.title }}</h5>
+                        <small class="text-muted">{{ question.created_at|timesince }} ago</small>
+                    </div>
+                    <p class="mb-1 text-muted">Asked by {{ question.user.username }}</p>
+                    <small class="text-muted">{{ question.answers.count }} Answer{{ question.answers.count|pluralize }}</small>
+                     {% if question.topics.all %}
+                        <div class="mt-2">
+                            {% for topic in question.topics.all %}
+                                <a href="{% url 'core:topic_detail' topic.slug %}" class="badge bg-secondary text-decoration-none">{{ topic.name }}</a>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-muted">No questions have been asked in this space yet.</p>
+    {% endif %}
+</div>
+{% endblock %}
