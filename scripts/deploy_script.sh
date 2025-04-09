@@ -2,7 +2,7 @@
 set -e
 
 # Replace {YOUR_GIT_REOPO_URL} with your actual Git repository URL
-GIT_REPO_URL="https://vivek129/quora_clone.git"
+GIT_REPO_URL="https://github.com/vivek129/quora_clone.git"
 
 # Replace {YOUR_PROJECT_MAIN_DIR_NAME} with your actual project directory name
 PROJECT_MAIN_DIR_NAME="quora_clone"
