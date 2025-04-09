@@ -1,10 +1,6 @@
-
-```markdown
-# Quora Clone 
+# Quora Clone
 
 A **Django-based** web application that replicates core functionalities of Quora — allowing users to ask questions, write answers, explore topics, and Spaces.
-
----
 
 ## 🌟 Features
 
@@ -23,8 +19,6 @@ A **Django-based** web application that replicates core functionalities of Quora
 - ⚙️ **Admin Panel**
   - Enhanced with [Django Jazzmin](https://github.com/farridav/django-jazzmin) for modern UI and model management
 
----
-
 ## 🚀 Quick Start (Local Development)
 
 ### 1. Clone the Repository
@@ -38,8 +32,10 @@ cd quora_clone
 
 ```bash
 python -m venv env
+
 # Windows
 .\env\Scripts\activate
+
 # macOS/Linux
 source env/bin/activate
 ```
@@ -64,15 +60,11 @@ python manage.py runserver
 
 Visit: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
----
-
 ## 🔑 Admin Access
 
 - **URL:** [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/)
 - **Username:** `admin`
 - **Password:** `admin`
-
----
 
 ## 👥 Test Users
 
@@ -87,8 +79,6 @@ You can log in with the following test user:
 | Sai      | password123 |
 
 More users were pre-seeded in the database via custom Django management commands.
-
----
 
 ## ☁️ Deployment on AWS
 
@@ -111,23 +101,17 @@ This application is deployed on **AWS EC2**, configured using **Nginx** and **Gu
   - Nginx/Gunicorn integration
   - Static collection
 
----
-
 ## 📂 Project Structure
 
 ```
 quora_clone/
-├── core/                
-├── templates/          
-├── static/             
-├── quora_clone/ 
+├── core/                 
+├── templates/           
+├── static/              
+├── quora_clone/  
 ├── manage.py
 ├── requirements.txt
 ├── nginx/
 ├── gunicorn/
 └── scripts/
 ```
-
----
-
-
