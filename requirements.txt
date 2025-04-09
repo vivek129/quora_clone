@@ -1,9 +1,7 @@
 
-asgiref==3.7.2
-Django==5.2
+Django
 django-jazzmin==2.6.0
-gunicorn==21.2.0
+gunicorn
 packaging==23.1
 pillow==10.0.0
-sqlparse==0.4.4
-tzdata==2023.3
+
